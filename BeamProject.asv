@@ -1,0 +1,13 @@
+clc;
+clear all;
+close all;
+
+%% Mechanical Vibration Project
+%% ======= LATERAL VIBRATIONS OF A BEAM =======
+% Data:
+% Young Modulus E
+E = 206; % GPa
+% Mass Density
+d = 7850; % kg/m^3
+% Area of the beam cross-section
+A = 111;  %
