@@ -141,8 +141,7 @@ beta_ex= sqrt(modal_text_f*2*pi/sqrt(E*J/(rho*A*L^4)));
 % plot first six theoretical, modal testing and FEM natural frequencies 
 % --------------------------------------------------------------------------
 %
-ix=1:6;
-%{
+ix=1:6;%{
 %}
 figure(1); subplot(2,1,1)
 plot( ix,om(ix),'r-', ix, om_ex(ix),'b*-',ix,f(ix),'ko')
