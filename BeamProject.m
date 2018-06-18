@@ -45,10 +45,10 @@ q = @(t, omega_n) A*cos(omega_n*t) + B*sin(omega_n*t);
 % e di conseguenza trovare le frequenze naturali per i primi 4 modi e
 % quindi plottare
 
-%% modal analysis: Case 1
+%% modal analysis: 
 % pinned-pinned
-% Number of modes
-Nmodes =4; % number of mode wanted
+% Number of modes 4
+Nmodes =4;
 
 [phi,wn] = eigenModes(geometry,4);
 
