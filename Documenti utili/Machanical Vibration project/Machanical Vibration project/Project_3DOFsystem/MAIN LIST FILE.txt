@@ -1,0 +1,58 @@
+Preporcessing data 
+
+	Preprocessing_data.m
+
+PARAMETERS IDENTIFICATION****************************************************************************
+
+file data steps.mat: use the step response to verify the ratio between the stiffnesses of the
+springs. Compute a new estimation for the voltage-to-force coeficient.
+
+	Param_id_steps.m
+
+file data impulses.mat: use the impulse response to identify the parameters. Choose
+between response to impulsive force or response to initial conditions: in the first case,
+due to the approximation of the force estimation, you can consider the voltage-to-force
+coeficient as one of the parameters to be estimated.
+
+	Param_id_opt_impulsive.m
+
+repeat the estimation of your parameters by assuming proportional damping. How many
+parameters have to be identified?
+
+	Param_id_opt_Proportional_impulsive.m
+
+in order to improve the estimation of the parameters, the springs can be detached and the
+masses can be blocked at their equilibrium position: describe a possible strategy for the
+estimation of the parameters by studying the behaviour of three different 1 DOF systems.
+	
+	metodo da spiegare 
+
+MODAL ANALYSIS***************************************************************************************
+
+use Rayleigh quotient and Matrix Iteration Method to estimate the modes of the un-
+damped system. Compare the results with the ones of the eigenvalue problem.
+
+	Modal_Analisys_free_damping.m
+
+use Laplace transform to plot the transfer functions between the applied force and the
+positions of the degrees of freedom.
+
+	Bode_plots.m
+
+repeat the previous operations for the proportional damping case (and compare the re-
+sults with the ones of the generic damping case). Use the modes of the proportional
+damping case to write an analytical expression for the configurations thanks to modal
+decomposition.
+	
+	da vedere 
+
+SINE SWEEP***********************************************************************************************
+
+Use data sine sweep slow.mat and data sine sweep fast.mat to compute the transfer functions
+numerically (data sine sweep fast.mat has a different sampling period).
+. compare the results of the two data sets.
+. compare the sine-sweep response with the results of the modal analysis (generic damping case).
+
+	Sine_Sweep.m
+
+	

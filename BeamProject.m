@@ -45,7 +45,7 @@ q = @(t, omega_n) A*cos(omega_n*t) + B*sin(omega_n*t);
 % e di conseguenza trovare le frequenze naturali per i primi 4 modi e
 % quindi plottare
 
-%% modal analysis: 
+%% 2) modal analysis:  four natural frequency
 % pinned-pinned
 % Number of modes 4
 Nmodes =4;

@@ -1,0 +1,169 @@
+%reapet the estimation of your parameters by assuming proportional damping.
+%How many parameters have to be identified? 
+
+% file request: error.m , input_data_impulses
+clear all; 
+close all; 
+clc;
+% Load data
+load input_data_impulses;
+
+%% set 
+%visto che utilizzo solo i dati impulsivi settiamo come variabili globali
+global v t x1_disp x2_disp x3_disp;
+
+x1_disp = x1_i ;
+x2_disp = x2_i ;
+x3_disp = x3_i ;
+
+%% First test with first guest parameters 
+
+% force 
+ka=2% [A/V]
+kt=0.1 %[Nm/A]
+kmp=26.25 %[1/m]
+g_v=1.2;
+f1=(ka*kt*kmp)*g_v*v; %N
+f2= zeros(size(f1));
+f3= zeros(size(f1));
+f= horzcat(f1,f2,f3);
+
+figure(1)
+plot(t,f1,'LineWidth',1.5)
+xlabel('t (s)');ylabel('force (N)');
+grid
+title('force')
+
+% transfer function 
+m1=1; %kg
+m2=1;
+m3=1;
+
+Ts=0.005;
+
+s = tf('s');
+%Mass Matrix
+M=[m1 0 0;
+    0 m2 0;
+    0 0 m3];
+
+%Stiffness Matrix
+K=[k1 -k1 0;
+    -k1 k1+k2 -k2;
+    0 -k2 k2+k3];
+
+%proportional Damping Matrix
+% C=alpha*[M] + beta*[K]
+alpha=1;
+beta=1
+C = alpha*M + beta*K
+
+%equation of motion in frequency domain
+D=M*s^2+C*s+K;
+%transfer function 
+G = inv(D)
+%system simulation 
+X = lsim(G,f,t);
+
+% plot output data
+figure(1)
+plot(t,x1_disp,t,X(:,1))
+xlabel('t (s)');ylabel('x (m)');
+grid
+title('comparision')
+
+% compare
+cost_func = 'NRMSE';
+fit = goodnessOfFit(X(:,1),x1_disp,cost_func);
+
+%% optimatization
+P = [1.5 1.5 1.5 0 0 6];
+%P = [m1,m2,m3,alpha,beta,g_v];
+
+%options = optimset('PlotFcns',@optimplotfval);
+%opt = fminsearch(@Obj_f_residual,P,options);
+
+A = [];
+b = [];
+Aeq = [];
+beq = [];
+
+lb = [0,0,0,0,0,0];
+ub = [2,2,2,10,10,7];
+
+opt = fmincon(@Obj_f_Proportional_residual,P,A,b,Aeq,beq,lb,ub)
+
+%% control 
+% force 
+ka=2% [A/V]
+kt=0.1 %[Nm/A]
+kmp=26.25 %[1/m]
+g_v= opt(1,6);
+f1=(ka*kt*kmp)*g_v*v; %N
+f2= zeros(size(f1));
+f3= zeros(size(f1));
+
+f= horzcat(f1,f2,f3);
+
+% transfer function 
+m1=opt(1,1); %kg
+m2=opt(1,2);
+m3=opt(1,3);
+
+Ts=0.005;
+
+s = tf('s');
+%Mass Matrix
+M=[m1 0 0;
+    0 m2 0;
+    0 0 m3];
+%Stiffness Matrix
+K=[k1 -k1 0;
+    -k1 k1+k2 -k2;
+    0 -k2 k2+k3];
+
+%proportional Damping Matrix
+alpha = opt(1,4);  %N/s
+beta  = opt(1,5);
+
+C = alpha*M + beta*K
+
+D=M*s^2+C*s+K;
+
+%D = [m1*s^2+c1*s+k1     -k1                            0;
+%           -k1           m2*s^2+c2*s+k1+k2            -k2;
+%            0          -k2                m3*s^2+c3*s+k2+k3]
+
+G = inv(D)
+
+X_opt = lsim(G,f,t);
+%% compare
+cost_func = 'NRMSE';
+fit_opt1 = goodnessOfFit(X_opt(:,1),x1_disp,cost_func);
+fit_opt2 = goodnessOfFit(X_opt(:,2),x2_disp,cost_func);
+fit_opt3 = goodnessOfFit(X_opt(:,3),x3_disp,cost_func);
+
+% plot output data
+figure
+plot(t,x1_disp,t,X_opt(:,1))
+xlabel('t (s)');ylabel('x1 (m)');
+grid
+title('comparision opt x1')
+
+figure
+plot(t,x2_disp,t,X_opt(:,2))
+xlabel('t (s)');ylabel('x2 (m)');
+grid
+title('comparision opt x2')
+
+figure
+plot(t,x3_disp,t,X_opt(:,3))
+xlabel('t (s)');ylabel('x3 (m)');
+grid
+title('comparision opt x3')
+
+%save data 
+save('opt_data_impulses_prop.mat', 'opt' )
+%P = [m1,m2,m3,alpha,beta,g_v];
+
+
